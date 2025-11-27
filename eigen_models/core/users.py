@@ -90,8 +90,8 @@ class User(Base):
         nullable=False,
     )
     
-    mobile_number = Column(String(255), nullable=True, comment="User's mobile number"),
-    image_url = Column(String(512), nullable=True, comment="User's image URL"),
+    mobile_number = Column(String(255), nullable=True, comment="User's mobile number")
+    image_url = Column(String(512), nullable=True, comment="User's image URL")
 
     # Table constraints and indexes
     __table_args__ = (

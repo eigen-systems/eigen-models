@@ -47,6 +47,8 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from eigen_models import Base
+# Import geoalchemy2 to ensure it's available during migration generation
+import geoalchemy2  # noqa: F401
 
 target_metadata = Base.metadata
 
