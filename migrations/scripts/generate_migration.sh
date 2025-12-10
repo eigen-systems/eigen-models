@@ -12,9 +12,14 @@ ENV_FILE=".env.dev"
 ENV_NAME="dev"
 
 # Check for environment flag from ENV variable or command line
-if [ "$ENV" = "prod" ] || [ "$1" = "--prod" ]; then
+# Handle --prod flag if it's the first argument
+if [ "$ENV" = "prod" ]; then
     ENV_FILE=".env.prod"
     ENV_NAME="prod"
+elif [ "$1" = "--prod" ]; then
+    ENV_FILE=".env.prod"
+    ENV_NAME="prod"
+    shift  # Remove --prod from arguments
 fi
 
 # Auto-source environment file if it exists
@@ -34,19 +39,24 @@ fi
 
 # Function to display help message
 show_help() {
-    echo "Usage: ./generate_migration.sh <migration_name> [options]"
+    echo "Usage: ./generate_migration.sh [--prod] <migration_name> [options]"
     echo ""
     echo "Arguments:"
     echo "  migration_name    Name for the migration (required)"
     echo ""
     echo "Options:"
+    echo "  --prod           Use production environment (.env.prod)"
     echo "  -h, --help       Show this help message"
     echo "  -v, --verbose    Show detailed output"
     echo "  --dry-run        Show what would be generated without creating"
     echo "  --validate       Validate model imports before generation"
     echo ""
+    echo "Environment:"
+    echo "  Default: Uses .env.dev (or set ENV=prod environment variable)"
+    echo ""
     echo "Examples:"
     echo "  ./generate_migration.sh add_user_table"
+    echo "  ./generate_migration.sh --prod add_user_table"
     echo "  ./generate_migration.sh \"Add new user fields\" --validate"
     exit 0
 }
@@ -56,6 +66,7 @@ if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     show_help
 fi
 
+# Get migration name (first argument after any flags)
 MIGRATION_NAME="$1"
 shift
 
@@ -98,8 +109,9 @@ try:
     print(f'   Metadata tables: {len(Base.metadata.tables)} tables found')
     
     # Test specific model imports
-    from eigen_models import User, TrackCase, MeetingInfo
+    from eigen_models import User, GitHubAccount, Profile, Post
     print('✅ Successfully imported core models')
+    print(f'   Models: User, GitHubAccount, Profile, Post')
     
 except ImportError as e:
     print(f'❌ Import Error: {e}')
@@ -150,6 +162,16 @@ if [ "$DRY_RUN" = true ]; then
     
     echo "✅ Dry run completed - ready to generate migration"
     exit 0
+fi
+
+# Ensure versions directory exists
+VERSIONS_DIR="migrations/alembic/versions"
+if [ ! -d "$VERSIONS_DIR" ]; then
+    echo "📁 Creating versions directory..."
+    mkdir -p "$VERSIONS_DIR"
+    # Create __init__.py if it doesn't exist (for Python package)
+    touch "$VERSIONS_DIR/__init__.py"
+    echo "✅ Versions directory created"
 fi
 
 # Generate timestamp for logging

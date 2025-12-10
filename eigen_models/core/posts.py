@@ -137,7 +137,7 @@ class Post(Base):
     )
     
     def __repr__(self) -> str:
-        return f"<Post(id={self.id}, author_id='{self.author_id}', type='{self.type}')>"
+        return f"<Post(id={self.id}, author_id='{self.author_id}', post_type='{self.post_type}')>"
     
     def to_dict(self) -> dict:
         """Convert post to dictionary for API responses."""

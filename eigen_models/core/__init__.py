@@ -5,9 +5,12 @@ from .posts import Post
 from .github_repositories import GitHubRepository
 from .interactions import PostInteraction, UserFollow
 from .sync_status import EmbeddingSyncStatus
+from .chat import Chat
+from .messages import Message
 
 __all__ = [
     "User",
+
     "GitHubAccount",
     "Profile",
     "Post",
@@ -15,5 +18,9 @@ __all__ = [
     "PostInteraction",
     "UserFollow",
     "EmbeddingSyncStatus",
+     "Post", "Chat", "Message"
+
 ]
+
+
 
