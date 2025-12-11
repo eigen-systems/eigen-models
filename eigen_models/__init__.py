@@ -6,6 +6,8 @@ from .core.posts import Post
 from .core.github_repositories import GitHubRepository
 from .core.interactions import PostInteraction, UserFollow
 from .core.sync_status import EmbeddingSyncStatus
+from .core.chat import Chat
+from .core.messages import Message
 
 __version__ = "1.0.0"
 __author__ = "Eigen Systems"
@@ -20,4 +22,6 @@ __all__ = [
     "PostInteraction",
     "UserFollow",
     "EmbeddingSyncStatus",
+    "Chat",
+    "Message",
 ]
