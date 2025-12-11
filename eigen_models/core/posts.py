@@ -10,6 +10,7 @@ from sqlalchemy import (
     CheckConstraint,
     Column,
     DateTime,
+    Float,
     ForeignKey,
     Index,
     Integer,
@@ -18,7 +19,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import relationship
-from geoalchemy2 import Geography
+
 from ..base import Base
 from .users import User
 
@@ -116,10 +117,17 @@ class Post(Base):
         nullable=False,
         comment="When the post was created"
     )
-    location_geog = Column(
-        Geography(geometry_type="POINT", srid=4326),
+
+    # Location coordinates
+    latitude = Column(
+        Float,
         nullable=True,
-        comment="Geographic point (latitude, longitude) using WGS84 (SRID 4326)"
+        comment="Latitude coordinate"
+    )
+    longitude = Column(
+        Float,
+        nullable=True,
+        comment="Longitude coordinate"
     )
     # Relationship
     author = relationship("User", backref="posts")
@@ -141,23 +149,6 @@ class Post(Base):
     
     def to_dict(self) -> dict:
         """Convert post to dictionary for API responses."""
-        location_geog_dict = None
-        if self.location_geog:
-            try:
-                # For Geography POINT, coordinates are typically accessed via .x (longitude) and .y (latitude)
-                # or through the geometry object
-                if hasattr(self.location_geog, 'x') and hasattr(self.location_geog, 'y'):
-                    location_geog_dict = {
-                        "latitude": float(self.location_geog.y),
-                        "longitude": float(self.location_geog.x),
-                    }
-                elif hasattr(self.location_geog, 'data'):
-                    # If it's a WKBElement, we might need to use ST_X/ST_Y functions
-                    # For now, return WKT representation
-                    location_geog_dict = {"wkt": str(self.location_geog)}
-            except (AttributeError, ValueError):
-                # Fallback to string representation
-                location_geog_dict = {"wkt": str(self.location_geog)}
         return {
             "id": self.id,
             "author_id": self.author_id,
@@ -170,6 +161,7 @@ class Post(Base):
             "github_repo_fullname": self.github_repo_fullname,
             "github_repo_url": self.github_repo_url,
             "created_at": self.created_at.isoformat() if self.created_at else None,
-            "location_geog": location_geog_dict,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
         }
 

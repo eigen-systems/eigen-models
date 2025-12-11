@@ -10,8 +10,6 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from sqlalchemy import inspect
-import geoalchemy2  # noqa: F401
 
 # revision identifiers, used by Alembic.
 revision: str = '075e4759c4a3'
@@ -70,7 +68,8 @@ def upgrade() -> None:
     sa.Column('github_repo_fullname', sa.Text(), nullable=True, comment="Full name of associated GitHub repository (e.g., 'vercel/next.js')"),
     sa.Column('github_repo_url', sa.Text(), nullable=True, comment='URL to the GitHub repository'),
     sa.Column('created_at', sa.DateTime(), nullable=False, comment='When the post was created'),
-    sa.Column('location_geog', geoalchemy2.types.Geography(geometry_type='POINT', srid=4326, dimension=2, from_text='ST_GeogFromText', name='geography'), nullable=True, comment='Geographic point (latitude, longitude) using WGS84 (SRID 4326)'),
+    sa.Column('latitude', sa.Float(), nullable=True, comment='Latitude coordinate'),
+    sa.Column('longitude', sa.Float(), nullable=True, comment='Longitude coordinate'),
     sa.CheckConstraint("post_type IN ('general', 'request')", name=op.f('ck_posts_ck_post_type')),
     sa.ForeignKeyConstraint(['author_id'], ['users.clerk_user_id'], name=op.f('posts_author_id_fkey'), ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_posts')),
@@ -79,22 +78,6 @@ def upgrade() -> None:
     op.create_index('idx_post_author_id', 'posts', ['author_id'], unique=False)
     op.create_index('idx_post_created_at', 'posts', ['created_at'], unique=False)
     op.create_index('idx_post_type', 'posts', ['post_type'], unique=False)
-    
-    # Check if idx_posts_location_geog index exists before creating it
-    # This handles the case where the index was created manually or in a previous failed migration
-    try:
-        bind = op.get_bind()
-        inspector = inspect(bind)
-        existing_indexes = [idx['name'] for idx in inspector.get_indexes('posts')]
-        if 'idx_posts_location_geog' not in existing_indexes:
-            op.create_index('idx_posts_location_geog', 'posts', ['location_geog'], unique=False, postgresql_using='gist')
-    except Exception:
-        # If check fails, try to create the index anyway (will fail gracefully if it exists)
-        try:
-            op.create_index('idx_posts_location_geog', 'posts', ['location_geog'], unique=False, postgresql_using='gist')
-        except Exception:
-            pass  # Index already exists, which is fine
-    
     op.create_index(op.f('ix_posts_author_id'), 'posts', ['author_id'], unique=False)
     op.create_index(op.f('ix_posts_id'), 'posts', ['id'], unique=False)
     op.create_table('profiles',
@@ -104,7 +87,8 @@ def upgrade() -> None:
     sa.Column('bio', sa.Text(), nullable=True, comment="User's biography or description"),
     sa.Column('skills', postgresql.ARRAY(sa.Text()), nullable=True, comment='Canonical list of skills'),
     sa.Column('timezone', sa.String(length=255), nullable=True, comment="User's timezone"),
-    sa.Column('location_geog', geoalchemy2.types.Geography(geometry_type='POINT', srid=4326, dimension=2, from_text='ST_GeogFromText', name='geography'), nullable=True, comment='Geographic point (latitude, longitude) using WGS84 (SRID 4326)'),
+    sa.Column('latitude', sa.Float(), nullable=True, comment='Latitude coordinate'),
+    sa.Column('longitude', sa.Float(), nullable=True, comment='Longitude coordinate'),
     sa.Column('location', sa.String(length=255), nullable=True, comment="User's location/city"),
     sa.Column('state', sa.String(length=255), nullable=True, comment="User's state/province"),
     sa.Column('country', sa.String(length=255), nullable=True, comment="User's country"),
@@ -126,22 +110,6 @@ def upgrade() -> None:
     )
     op.create_index('idx_profile_github_user_id', 'profiles', ['github_user_id'], unique=False)
     op.create_index('idx_profile_user_id', 'profiles', ['user_id'], unique=False)
-    
-    # Check if idx_profiles_location_geog index exists before creating it
-    # This handles the case where the index was created manually or in a previous failed migration
-    try:
-        bind = op.get_bind()
-        inspector = inspect(bind)
-        existing_profiles_indexes = [idx['name'] for idx in inspector.get_indexes('profiles')]
-        if 'idx_profiles_location_geog' not in existing_profiles_indexes:
-            op.create_index('idx_profiles_location_geog', 'profiles', ['location_geog'], unique=False, postgresql_using='gist')
-    except Exception:
-        # If check fails, try to create the index anyway (will fail gracefully if it exists)
-        try:
-            op.create_index('idx_profiles_location_geog', 'profiles', ['location_geog'], unique=False, postgresql_using='gist')
-        except Exception:
-            pass  # Index already exists, which is fine
-    
     op.create_index(op.f('ix_profiles_id'), 'profiles', ['id'], unique=False)
     op.create_index(op.f('ix_profiles_user_id'), 'profiles', ['user_id'], unique=True)
     # ### end Alembic commands ###
@@ -151,13 +119,11 @@ def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_index(op.f('ix_profiles_user_id'), table_name='profiles')
     op.drop_index(op.f('ix_profiles_id'), table_name='profiles')
-    op.drop_index('idx_profiles_location_geog', table_name='profiles', postgresql_using='gist')
     op.drop_index('idx_profile_user_id', table_name='profiles')
     op.drop_index('idx_profile_github_user_id', table_name='profiles')
     op.drop_table('profiles')
     op.drop_index(op.f('ix_posts_id'), table_name='posts')
     op.drop_index(op.f('ix_posts_author_id'), table_name='posts')
-    op.drop_index('idx_posts_location_geog', table_name='posts', postgresql_using='gist')
     op.drop_index('idx_post_type', table_name='posts')
     op.drop_index('idx_post_created_at', table_name='posts')
     op.drop_index('idx_post_author_id', table_name='posts')

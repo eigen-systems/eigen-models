@@ -8,6 +8,3 @@ typing-extensions>=4.0.0
 
 # UUID support
 uuid>=1.30
-
-# Geographic data support
-geoalchemy2>=0.15.0

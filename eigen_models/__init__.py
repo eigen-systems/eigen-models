@@ -9,6 +9,7 @@ from .core.sync_status import EmbeddingSyncStatus
 from .core.chat import Chat
 from .core.messages import Message
 
+
 __version__ = "1.0.0"
 __author__ = "Eigen Systems"
 

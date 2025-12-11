@@ -11,6 +11,7 @@ from sqlalchemy import (
     BigInteger,
     Column,
     DateTime,
+    Float,
     ForeignKey,
     Index,
     Integer,
@@ -19,7 +20,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import relationship
-from geoalchemy2 import Geography
 
 from ..base import Base
 from .users import User
@@ -39,7 +39,8 @@ class Profile(Base):
         bio: User's biography or description
         skills: Array of canonical skills
         timezone: User's timezone
-        location_geog: Geographic point (latitude, longitude) using WGS84 (SRID 4326)
+        latitude: Latitude coordinate
+        longitude: Longitude coordinate
         location: User's location/city (text description)
         state: User's state/province
         country: User's country
@@ -89,10 +90,15 @@ class Profile(Base):
     timezone = Column(String(255), nullable=True, comment="User's timezone")
     
     # Geographic location
-    location_geog = Column(
-        Geography(geometry_type="POINT", srid=4326),
+    latitude = Column(
+        Float,
         nullable=True,
-        comment="Geographic point (latitude, longitude) using WGS84 (SRID 4326)"
+        comment="Latitude coordinate"
+    )
+    longitude = Column(
+        Float,
+        nullable=True,
+        comment="Longitude coordinate"
     )
     location = Column(String(255), nullable=True, comment="User's location/city")
     state = Column(String(255), nullable=True, comment="User's state/province")
@@ -161,25 +167,6 @@ class Profile(Base):
     
     def to_dict(self) -> dict:
         """Convert profile to dictionary for API responses."""
-        # Handle Geography POINT serialization
-        location_geog_dict = None
-        if self.location_geog:
-            try:
-                # For Geography POINT, coordinates are typically accessed via .x (longitude) and .y (latitude)
-                # or through the geometry object
-                if hasattr(self.location_geog, 'x') and hasattr(self.location_geog, 'y'):
-                    location_geog_dict = {
-                        "latitude": float(self.location_geog.y),
-                        "longitude": float(self.location_geog.x),
-                    }
-                elif hasattr(self.location_geog, 'data'):
-                    # If it's a WKBElement, we might need to use ST_X/ST_Y functions
-                    # For now, return WKT representation
-                    location_geog_dict = {"wkt": str(self.location_geog)}
-            except (AttributeError, ValueError):
-                # Fallback to string representation
-                location_geog_dict = {"wkt": str(self.location_geog)}
-        
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -187,7 +174,8 @@ class Profile(Base):
             "bio": self.bio,
             "skills": self.skills if self.skills else [],
             "timezone": self.timezone,
-            "location_geog": location_geog_dict,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
             "location": self.location,
             "state": self.state,
             "country": self.country,

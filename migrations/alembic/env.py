@@ -51,44 +51,8 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from eigen_models import Base
-# Import geoalchemy2 to ensure it's available during migration generation
-import geoalchemy2  # noqa: F401
 
 target_metadata = Base.metadata
-
-# PostGIS system tables that should be excluded from migrations
-POSTGIS_SYSTEM_TABLES = {
-    'spatial_ref_sys',
-    'geography_columns',
-    'geometry_columns',
-    'raster_columns',
-    'raster_overviews',
-}
-
-
-def include_object(object, name, type_, reflected, compare_to):
-    """
-    Filter function to exclude PostGIS system tables from autogenerate.
-    
-    This prevents Alembic from trying to drop or modify PostGIS system tables
-    which are managed by the PostGIS extension and should not be touched.
-    
-    Args:
-        object: The object being considered
-        name: Name of the object
-        type_: Type of object ('table', 'column', 'index', etc.)
-        reflected: Whether the object was reflected from the database
-        compare_to: The object being compared against
-    
-    Returns:
-        bool: True to include the object, False to exclude it
-    """
-    # Exclude PostGIS system tables
-    if type_ == 'table' and name in POSTGIS_SYSTEM_TABLES:
-        return False
-    
-    # Include all other objects
-    return True
 
 
 # other values from the config, defined by the needs of env.py,
@@ -115,7 +79,6 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -139,7 +102,6 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            include_object=include_object,
         )
 
         with context.begin_transaction():
