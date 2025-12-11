@@ -33,7 +33,7 @@ class PostInteraction(Base):
         nullable=False,
     )
     interaction_type = Column(String(30), nullable=False)
-    metadata = Column(JSONB, nullable=True)
+    interaction_metadata = Column(JSONB, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     user = relationship("User", backref="interactions")
@@ -53,7 +53,7 @@ class PostInteraction(Base):
             "user_id": self.user_id,
             "post_id": self.post_id,
             "interaction_type": self.interaction_type,
-            "metadata": self.metadata,
+            "interaction_metadata": self.interaction_metadata,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
