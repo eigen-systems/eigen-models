@@ -8,6 +8,7 @@ from .core.interactions import PostInteraction, UserFollow
 from .core.sync_status import EmbeddingSyncStatus
 from .core.chat import Chat
 from .core.messages import Message
+from .core.comments import Comment
 
 
 __version__ = "1.0.0"
@@ -25,4 +26,5 @@ __all__ = [
     "EmbeddingSyncStatus",
     "Chat",
     "Message",
+    "Comment",
 ]
