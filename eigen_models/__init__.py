@@ -9,6 +9,7 @@ from .core.sync_status import EmbeddingSyncStatus
 from .core.chat import Chat
 from .core.messages import Message
 from .core.comments import Comment
+from .core.notifications import Notification, NotificationType
 
 
 __version__ = "1.0.0"
@@ -27,4 +28,6 @@ __all__ = [
     "Chat",
     "Message",
     "Comment",
+    "Notification",
+    "NotificationType",
 ]

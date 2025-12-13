@@ -7,10 +7,11 @@ from .interactions import PostInteraction, UserFollow
 from .sync_status import EmbeddingSyncStatus
 from .chat import Chat
 from .messages import Message
+from .comments import Comment
+from .notifications import Notification, NotificationType
 
 __all__ = [
     "User",
-
     "GitHubAccount",
     "Profile",
     "Post",
@@ -18,9 +19,9 @@ __all__ = [
     "PostInteraction",
     "UserFollow",
     "EmbeddingSyncStatus",
-     "Post", "Chat", "Message"
-
+    "Chat",
+    "Message",
+    "Comment",
+    "Notification",
+    "NotificationType",
 ]
-
-
-
