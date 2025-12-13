@@ -13,6 +13,7 @@ from sqlalchemy import (
     Text,
     Boolean,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from ..base import Base
@@ -38,6 +39,7 @@ class Comment(Base):
         nullable=True,
     )
     content = Column(Text, nullable=False)
+    attachments = Column(JSONB, nullable=True, default=None)  # List of attachment URLs
     is_edited = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(
@@ -65,6 +67,7 @@ class Comment(Base):
             "post_id": self.post_id,
             "parent_id": self.parent_id,
             "content": self.content,
+            "attachments": self.attachments,
             "is_edited": self.is_edited,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
