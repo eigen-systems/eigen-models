@@ -3,7 +3,7 @@ from .github_accounts import GitHubAccount
 from .profiles import Profile
 from .posts import Post
 from .github_repositories import GitHubRepository
-from .interactions import PostInteraction, UserFollow
+from .interactions import PostInteraction, UserInteraction, UserFollow
 from .sync_status import EmbeddingSyncStatus
 from .chat import Chat
 from .messages import Message
@@ -17,6 +17,7 @@ __all__ = [
     "Post",
     "GitHubRepository",
     "PostInteraction",
+    "UserInteraction",
     "UserFollow",
     "EmbeddingSyncStatus",
     "Chat",

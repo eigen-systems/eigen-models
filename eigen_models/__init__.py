@@ -4,7 +4,7 @@ from .core.github_accounts import GitHubAccount
 from .core.profiles import Profile
 from .core.posts import Post
 from .core.github_repositories import GitHubRepository
-from .core.interactions import PostInteraction, UserFollow
+from .core.interactions import PostInteraction, UserInteraction, UserFollow
 from .core.sync_status import EmbeddingSyncStatus
 from .core.chat import Chat
 from .core.messages import Message
@@ -23,6 +23,7 @@ __all__ = [
     "Post",
     "GitHubRepository",
     "PostInteraction",
+    "UserInteraction",
     "UserFollow",
     "EmbeddingSyncStatus",
     "Chat",
