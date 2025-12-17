@@ -124,6 +124,33 @@ class Profile(Base):
         nullable=True,
         comment="Timestamp of last GitHub sync"
     )
+
+    # Figma integration status
+    figma_connected = Column(
+        Boolean,
+        default=False,
+        nullable=False,
+        comment="Whether Figma account is connected"
+    )
+    figma_username = Column(Text, nullable=True, comment="Figma username/handle if connected")
+    figma_user_id = Column(
+        Text,
+        nullable=True,
+        comment="Figma user ID if connected"
+    )
+    figma_email = Column(Text, nullable=True, comment="Figma email if connected")
+    figma_access_token = Column(Text, nullable=True, comment="Figma OAuth access token")
+    figma_refresh_token = Column(Text, nullable=True, comment="Figma OAuth refresh token")
+    figma_token_expires_at = Column(
+        DateTime,
+        nullable=True,
+        comment="When Figma access token expires"
+    )
+    figma_last_synced = Column(
+        DateTime,
+        nullable=True,
+        comment="Timestamp of last Figma sync"
+    )
     
     # Resume information
     resume_uploaded = Column(
@@ -158,6 +185,7 @@ class Profile(Base):
     __table_args__ = (
         Index("idx_profile_user_id", "user_id"),
         Index("idx_profile_github_user_id", "github_user_id"),
+        Index("idx_profile_figma_user_id", "figma_user_id"),
         # Spatial index for geographic queries (PostGIS will create GIST index)
         {"comment": "User profile information and professional details"},
     )
@@ -185,6 +213,11 @@ class Profile(Base):
             "github_username": self.github_username,
             "github_user_id": self.github_user_id,
             "github_last_synced": self.github_last_synced.isoformat() if self.github_last_synced else None,
+            "figma_connected": self.figma_connected,
+            "figma_username": self.figma_username,
+            "figma_user_id": self.figma_user_id,
+            "figma_email": self.figma_email,
+            "figma_last_synced": self.figma_last_synced.isoformat() if self.figma_last_synced else None,
             "resume_uploaded": self.resume_uploaded,
             "resume_file_url": self.resume_file_url,
             "resume_text": self.resume_text,
