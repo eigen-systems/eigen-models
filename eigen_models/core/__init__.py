@@ -9,6 +9,11 @@ from .chat import Chat
 from .messages import Message
 from .comments import Comment
 from .notifications import Notification, NotificationType
+from .projects import Project
+from .project_members import ProjectMember
+from .project_join_requests import ProjectJoinRequest
+from .project_invitations import ProjectInvitation
+from .project_activities import ProjectActivity
 
 __all__ = [
     "User",
@@ -25,4 +30,9 @@ __all__ = [
     "Comment",
     "Notification",
     "NotificationType",
+    "Project",
+    "ProjectMember",
+    "ProjectJoinRequest",
+    "ProjectInvitation",
+    "ProjectActivity",
 ]

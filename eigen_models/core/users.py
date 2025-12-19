@@ -93,6 +93,28 @@ class User(Base):
     mobile_number = Column(String(255), nullable=True, comment="User's mobile number")
     image_url = Column(String(512), nullable=True, comment="User's image URL")
 
+    # Project relationships
+    owned_projects = relationship(
+        "Project",
+        back_populates="owner",
+        foreign_keys="Project.owner_id"
+    )
+    project_memberships = relationship(
+        "ProjectMember",
+        back_populates="user",
+        foreign_keys="ProjectMember.user_id"
+    )
+    project_join_requests = relationship(
+        "ProjectJoinRequest",
+        back_populates="user",
+        foreign_keys="ProjectJoinRequest.user_id"
+    )
+    project_invitations = relationship(
+        "ProjectInvitation",
+        back_populates="user",
+        foreign_keys="ProjectInvitation.user_id"
+    )
+
     # Table constraints and indexes
     __table_args__ = (
         Index("idx_user_email_active", "email", "is_active"),

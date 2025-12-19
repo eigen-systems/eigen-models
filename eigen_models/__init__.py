@@ -10,6 +10,11 @@ from .core.chat import Chat
 from .core.messages import Message
 from .core.comments import Comment
 from .core.notifications import Notification, NotificationType
+from .core.projects import Project
+from .core.project_members import ProjectMember
+from .core.project_join_requests import ProjectJoinRequest
+from .core.project_invitations import ProjectInvitation
+from .core.project_activities import ProjectActivity
 
 
 __version__ = "1.0.0"
@@ -31,4 +36,9 @@ __all__ = [
     "Comment",
     "Notification",
     "NotificationType",
+    "Project",
+    "ProjectMember",
+    "ProjectJoinRequest",
+    "ProjectInvitation",
+    "ProjectActivity",
 ]
