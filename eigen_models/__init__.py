@@ -15,6 +15,12 @@ from .core.project_members import ProjectMember
 from .core.project_join_requests import ProjectJoinRequest
 from .core.project_invitations import ProjectInvitation
 from .core.project_activities import ProjectActivity
+from .core.project_groups import ProjectGroup
+from .core.project_group_members import ProjectGroupMember
+from .core.project_group_join_requests import ProjectGroupJoinRequest
+from .core.group_messages import GroupMessage
+from .core.message_reactions import MessageReaction
+from .core.message_read_status import MessageReadStatus
 
 
 __version__ = "1.0.0"
@@ -41,4 +47,10 @@ __all__ = [
     "ProjectJoinRequest",
     "ProjectInvitation",
     "ProjectActivity",
+    "ProjectGroup",
+    "ProjectGroupMember",
+    "ProjectGroupJoinRequest",
+    "GroupMessage",
+    "MessageReaction",
+    "MessageReadStatus",
 ]

@@ -14,6 +14,12 @@ from .project_members import ProjectMember
 from .project_join_requests import ProjectJoinRequest
 from .project_invitations import ProjectInvitation
 from .project_activities import ProjectActivity
+from .project_groups import ProjectGroup
+from .project_group_members import ProjectGroupMember
+from .project_group_join_requests import ProjectGroupJoinRequest
+from .group_messages import GroupMessage
+from .message_reactions import MessageReaction
+from .message_read_status import MessageReadStatus
 
 __all__ = [
     "User",
@@ -35,4 +41,10 @@ __all__ = [
     "ProjectJoinRequest",
     "ProjectInvitation",
     "ProjectActivity",
+    "ProjectGroup",
+    "ProjectGroupMember",
+    "ProjectGroupJoinRequest",
+    "GroupMessage",
+    "MessageReaction",
+    "MessageReadStatus",
 ]

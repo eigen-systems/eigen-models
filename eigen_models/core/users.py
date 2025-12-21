@@ -115,6 +115,18 @@ class User(Base):
         foreign_keys="ProjectInvitation.user_id"
     )
 
+    # Group relationships
+    group_memberships = relationship(
+        "ProjectGroupMember",
+        back_populates="user",
+        foreign_keys="ProjectGroupMember.user_id"
+    )
+    group_join_requests = relationship(
+        "ProjectGroupJoinRequest",
+        back_populates="user",
+        foreign_keys="ProjectGroupJoinRequest.user_id"
+    )
+
     # Table constraints and indexes
     __table_args__ = (
         Index("idx_user_email_active", "email", "is_active"),

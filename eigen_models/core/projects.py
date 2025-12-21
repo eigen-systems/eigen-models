@@ -197,6 +197,11 @@ class Project(Base):
         back_populates="project",
         cascade="all, delete-orphan"
     )
+    groups = relationship(
+        "ProjectGroup",
+        back_populates="project",
+        cascade="all, delete-orphan"
+    )
 
     # Table constraints and indexes
     __table_args__ = (
