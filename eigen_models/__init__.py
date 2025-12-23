@@ -10,6 +10,7 @@ from .core.chat import Chat
 from .core.messages import Message
 from .core.comments import Comment
 from .core.notifications import Notification, NotificationType
+from .core.push_tokens import PushToken
 from .core.projects import Project
 from .core.project_members import ProjectMember
 from .core.project_join_requests import ProjectJoinRequest
@@ -42,6 +43,7 @@ __all__ = [
     "Comment",
     "Notification",
     "NotificationType",
+    "PushToken",
     "Project",
     "ProjectMember",
     "ProjectJoinRequest",
