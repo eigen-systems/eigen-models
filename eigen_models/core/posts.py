@@ -129,8 +129,19 @@ class Post(Base):
         nullable=True,
         comment="Longitude coordinate"
     )
-    # Relationship
+
+    # Linked project (optional)
+    project_id = Column(
+        Integer,
+        ForeignKey("projects.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+        comment="Linked project for the post"
+    )
+
+    # Relationships
     author = relationship("User", backref="posts")
+    project = relationship("Project", back_populates="linked_posts")
     
     # Table constraints and indexes
     __table_args__ = (
@@ -141,6 +152,7 @@ class Post(Base):
         Index("idx_post_author_id", "author_id"),
         Index("idx_post_type", "post_type"),
         Index("idx_post_created_at", "created_at"),
+        Index("idx_post_project_id", "project_id"),
         {"comment": "User posts including general posts and request posts"},
     )
     
@@ -149,7 +161,7 @@ class Post(Base):
     
     def to_dict(self) -> dict:
         """Convert post to dictionary for API responses."""
-        return {
+        result = {
             "id": self.id,
             "author_id": self.author_id,
             "post_type": self.post_type,
@@ -163,5 +175,17 @@ class Post(Base):
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "latitude": self.latitude,
             "longitude": self.longitude,
+            "project_id": self.project_id,
         }
+        # Include project info if relationship is loaded
+        if self.project_id and self.project:
+            result["project"] = {
+                "id": self.project.id,
+                "title": self.project.title,
+                "description": self.project.description,
+                "visibility": self.project.visibility,
+                "owner_id": self.project.owner_id,
+                "member_count": self.project.member_count,
+            }
+        return result
 

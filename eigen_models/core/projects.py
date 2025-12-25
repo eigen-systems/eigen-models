@@ -202,6 +202,11 @@ class Project(Base):
         back_populates="project",
         cascade="all, delete-orphan"
     )
+    linked_posts = relationship(
+        "Post",
+        back_populates="project",
+        lazy="dynamic"
+    )
 
     # Table constraints and indexes
     __table_args__ = (
