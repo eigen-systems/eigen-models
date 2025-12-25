@@ -17,6 +17,7 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
 )
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import relationship
 
 from ..base import Base
@@ -39,6 +40,7 @@ class ProjectGroupMember(Base):
         joined_via: How they joined ('auto', 'direct', 'request')
         notifications_enabled: Whether member receives group notifications
         last_read_at: Last time user read messages in this group
+        last_seen_public_id: Last message public_id seen by user (sync cursor)
         created_at: When the membership was created
         updated_at: When the membership was last updated
     """
@@ -101,6 +103,13 @@ class ProjectGroupMember(Base):
         comment="Last time user read messages in this group"
     )
 
+    # Last seen message cursor for sync (UUIDv7)
+    last_seen_public_id = Column(
+        PG_UUID(as_uuid=True),
+        nullable=True,
+        comment="Last message public_id seen by user for sync cursor"
+    )
+
     # Timestamps
     created_at = Column(
         DateTime,
@@ -160,6 +169,7 @@ class ProjectGroupMember(Base):
             "joined_via": self.joined_via,
             "notifications_enabled": self.notifications_enabled,
             "last_read_at": self.last_read_at.isoformat() if self.last_read_at else None,
+            "last_seen_public_id": str(self.last_seen_public_id) if self.last_seen_public_id else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }

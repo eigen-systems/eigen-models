@@ -5,6 +5,7 @@ This module contains the GroupMessage model for chat messages within project gro
 """
 
 import datetime
+from uuid import UUID
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
@@ -16,7 +17,7 @@ from sqlalchemy import (
     String,
     Text,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
 from sqlalchemy.orm import relationship
 
 from ..base import Base
@@ -31,6 +32,7 @@ class GroupMessage(Base):
 
     Attributes:
         id: Primary key integer field
+        public_id: UUIDv7 public identifier for client-side operations
         group_id: Foreign key to project_groups table
         sender_id: Foreign key to users table
         content: Message text content
@@ -52,6 +54,15 @@ class GroupMessage(Base):
         primary_key=True,
         index=True,
         comment="Primary key for group message"
+    )
+
+    # Public identifier (UUIDv7) for client-side operations
+    public_id = Column(
+        PG_UUID(as_uuid=True),
+        nullable=False,
+        unique=True,
+        index=True,
+        comment="Public UUIDv7 identifier for client-side operations"
     )
 
     # Group reference
@@ -172,6 +183,7 @@ class GroupMessage(Base):
         Index("idx_group_message_created", "created_at"),
         Index("idx_group_message_reply", "reply_to_id"),
         Index("idx_group_message_group_created", "group_id", "created_at"),
+        Index("idx_group_message_group_public", "group_id", "public_id"),
         {"comment": "Chat messages in project groups"},
     )
 
@@ -183,6 +195,7 @@ class GroupMessage(Base):
         """Convert group message to dictionary for API responses."""
         return {
             "id": self.id,
+            "public_id": str(self.public_id) if self.public_id else None,
             "group_id": self.group_id,
             "sender_id": self.sender_id,
             "content": self.content if not self.is_deleted else None,
