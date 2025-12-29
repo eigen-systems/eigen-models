@@ -20,6 +20,12 @@ from .project_group_join_requests import ProjectGroupJoinRequest
 from .group_messages import GroupMessage
 from .message_reactions import MessageReaction
 from .message_read_status import MessageReadStatus
+from .project_completions import ProjectCompletion
+from .channels import Channel
+from .channel_members import ChannelMember
+from .channel_messages import ChannelMessage
+from .channel_threads import ChannelThread
+from .channel_message_reactions import ChannelMessageReaction
 
 __all__ = [
     "User",
@@ -47,4 +53,10 @@ __all__ = [
     "GroupMessage",
     "MessageReaction",
     "MessageReadStatus",
+    "ProjectCompletion",
+    "Channel",
+    "ChannelMember",
+    "ChannelMessage",
+    "ChannelThread",
+    "ChannelMessageReaction",
 ]

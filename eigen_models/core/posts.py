@@ -85,7 +85,12 @@ class Post(Base):
         nullable=True,
         comment="Post requirements (JSON structure, typically for request posts)"
     )
-    
+    request_details = Column(
+        JSONB,
+        nullable=True,
+        comment="Request post details: {compensation_type, stipend_amount, stipend_currency, duration_type, duration_value, work_type, location, application_deadline, positions_available}"
+    )
+
     # Arrays
     skills = Column(
         ARRAY(Text),
@@ -153,6 +158,11 @@ class Post(Base):
         Index("idx_post_type", "post_type"),
         Index("idx_post_created_at", "created_at"),
         Index("idx_post_project_id", "project_id"),
+        # GIN indexes for efficient array containment queries
+        Index("idx_post_tags_gin", "tags", postgresql_using="gin"),
+        Index("idx_post_skills_gin", "skills", postgresql_using="gin"),
+        # Composite index for author + created_at (common feed query pattern)
+        Index("idx_post_author_created", "author_id", "created_at"),
         {"comment": "User posts including general posts and request posts"},
     )
     
@@ -168,6 +178,7 @@ class Post(Base):
             "content": self.content,
             "attachments": self.attachments,
             "requirements": self.requirements,
+            "request_details": self.request_details,
             "skills": self.skills if self.skills else [],
             "tags": self.tags if self.tags else [],
             "github_repo_fullname": self.github_repo_fullname,

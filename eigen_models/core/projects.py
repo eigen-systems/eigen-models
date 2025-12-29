@@ -71,6 +71,11 @@ class Project(Base):
         nullable=True,
         comment="Project description"
     )
+    image_url = Column(
+        Text,
+        nullable=True,
+        comment="Project cover image URL"
+    )
 
     # Owner
     owner_id = Column(
@@ -207,6 +212,17 @@ class Project(Base):
         back_populates="project",
         lazy="dynamic"
     )
+    channels = relationship(
+        "Channel",
+        back_populates="project",
+        cascade="all, delete-orphan"
+    )
+    completion = relationship(
+        "ProjectCompletion",
+        back_populates="project",
+        uselist=False,
+        cascade="all, delete-orphan"
+    )
 
     # Table constraints and indexes
     __table_args__ = (
@@ -215,7 +231,7 @@ class Project(Base):
             name="ck_project_visibility"
         ),
         CheckConstraint(
-            "status IN ('active', 'archived', 'deleted')",
+            "status IN ('active', 'archived', 'deleted', 'completed')",
             name="ck_project_status"
         ),
         Index("idx_project_owner", "owner_id"),
@@ -236,6 +252,7 @@ class Project(Base):
             "id": self.id,
             "title": self.title,
             "description": self.description,
+            "image_url": self.image_url,
             "owner_id": self.owner_id,
             "visibility": self.visibility,
             "status": self.status,
