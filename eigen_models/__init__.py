@@ -19,9 +19,15 @@ from .core.project_activities import ProjectActivity
 from .core.project_groups import ProjectGroup
 from .core.project_group_members import ProjectGroupMember
 from .core.project_group_join_requests import ProjectGroupJoinRequest
+from .core.project_completions import ProjectCompletion
 from .core.group_messages import GroupMessage
 from .core.message_reactions import MessageReaction
 from .core.message_read_status import MessageReadStatus
+from .core.channels import Channel
+from .core.channel_messages import ChannelMessage
+from .core.channel_threads import ChannelThread
+from .core.channel_members import ChannelMember
+from .core.channel_message_reactions import ChannelMessageReaction
 
 
 __version__ = "1.0.0"
@@ -52,7 +58,13 @@ __all__ = [
     "ProjectGroup",
     "ProjectGroupMember",
     "ProjectGroupJoinRequest",
+    "ProjectCompletion",
     "GroupMessage",
     "MessageReaction",
     "MessageReadStatus",
+    "Channel",
+    "ChannelMessage",
+    "ChannelThread",
+    "ChannelMember",
+    "ChannelMessageReaction",
 ]
