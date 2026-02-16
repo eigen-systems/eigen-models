@@ -1,8 +1,5 @@
 """
 Profile models for the Eigen platform.
-
-This module contains models for user profiles, storing extended user information
-including professional details, skills, GitHub integration status, and resume information.
 """
 
 import datetime
@@ -26,207 +23,63 @@ from .users import User
 
 
 class Profile(Base):
-    """
-    Profile model representing extended user profile information.
-    
-    This model stores professional profile data including headline, bio, skills,
-    location, timezone, GitHub connection status, and resume information.
-    
-    Attributes:
-        id: Primary key integer field
-        user_id: Foreign key to the users table (references clerk_user_id)
-        headline: Professional headline or title
-        bio: User's biography or description
-        skills: Array of canonical skills
-        timezone: User's timezone
-        latitude: Latitude coordinate
-        longitude: Longitude coordinate
-        location: User's location/city (text description)
-        state: User's state/province
-        country: User's country
-        pin: Postal/ZIP code
-        district: User's district/region
-        github_connected: Whether GitHub account is connected
-        github_username: GitHub username if connected
-        github_user_id: GitHub user ID if connected
-        github_last_synced: Timestamp of last GitHub sync
-        resume_uploaded: Whether resume has been uploaded
-        resume_file_url: URL to uploaded resume file
-        resume_text: Extracted text content from resume
-        resume_json: Structured JSON data from resume parsing
-        created_at: When the profile was created
-        updated_at: When the profile was last modified
-    """
-    
     __tablename__ = "profiles"
-    
-    # Primary key
-    id = Column(
-        Integer,
-        primary_key=True,
-        index=True,
-        comment="Primary key for profile"
-    )
-    
-    # Foreign key to users table
-    # Note: User model uses clerk_user_id (String) as PK, so this references that
+
+    id = Column(Integer, primary_key=True, index=True)
     user_id = Column(
         String(255),
         ForeignKey("users.clerk_user_id", ondelete="CASCADE"),
         unique=True,
         nullable=False,
         index=True,
-        comment="Foreign key to users table"
     )
-    
-    # Profile information
-    headline = Column(Text, nullable=True, comment="Professional headline or title")
-    bio = Column(Text, nullable=True, comment="User's biography or description")
-    skills = Column(
-        ARRAY(Text),
-        nullable=True,
-        comment="Canonical list of skills"
-    )
-    timezone = Column(String(255), nullable=True, comment="User's timezone")
-    
+
+    headline = Column(Text, nullable=True)
+    bio = Column(Text, nullable=True)
+    skills = Column(ARRAY(Text), nullable=True)
+    timezone = Column(String(255), nullable=True)
+
     # Geographic location
-    latitude = Column(
-        Float,
-        nullable=True,
-        comment="Latitude coordinate"
-    )
-    longitude = Column(
-        Float,
-        nullable=True,
-        comment="Longitude coordinate"
-    )
-    location = Column(String(255), nullable=True, comment="User's location/city")
-    state = Column(String(255), nullable=True, comment="User's state/province")
-    country = Column(String(255), nullable=True, comment="User's country")
-    pin = Column(String(50), nullable=True, comment="Postal/ZIP code")
-    district = Column(String(255), nullable=True, comment="User's district/region")
-    
-    # GitHub integration status
-    github_connected = Column(
-        Boolean,
-        default=False,
-        nullable=False,
-        comment="Whether GitHub account is connected"
-    )
-    github_username = Column(Text, nullable=True, comment="GitHub username if connected")
-    github_user_id = Column(
-        BigInteger,
-        nullable=True,
-        comment="GitHub user ID if connected"
-    )
-    github_last_synced = Column(
-        DateTime,
-        nullable=True,
-        comment="Timestamp of last GitHub sync"
-    )
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
+    location = Column(String(255), nullable=True)
+    state = Column(String(255), nullable=True)
+    country = Column(String(255), nullable=True)
+    pin = Column(String(50), nullable=True)
+    district = Column(String(255), nullable=True)
 
-    # Figma integration status
-    figma_connected = Column(
-        Boolean,
-        default=False,
-        nullable=False,
-        comment="Whether Figma account is connected"
-    )
-    figma_username = Column(Text, nullable=True, comment="Figma username/handle if connected")
-    figma_user_id = Column(
-        Text,
-        nullable=True,
-        comment="Figma user ID if connected"
-    )
-    figma_email = Column(Text, nullable=True, comment="Figma email if connected")
-    figma_access_token = Column(Text, nullable=True, comment="Figma OAuth access token")
-    figma_refresh_token = Column(Text, nullable=True, comment="Figma OAuth refresh token")
-    figma_token_expires_at = Column(
-        DateTime,
-        nullable=True,
-        comment="When Figma access token expires"
-    )
-    figma_last_synced = Column(
-        DateTime,
-        nullable=True,
-        comment="Timestamp of last Figma sync"
-    )
+    # GitHub integration
+    github_connected = Column(Boolean, default=False, nullable=False)
+    github_username = Column(Text, nullable=True)
+    github_user_id = Column(BigInteger, nullable=True)
+    github_last_synced = Column(DateTime, nullable=True)
 
-    # Google Calendar integration status
-    google_connected = Column(
-        Boolean,
-        default=False,
-        nullable=False,
-        comment="Whether Google Calendar is connected"
-    )
-    google_user_id = Column(
-        Text,
-        nullable=True,
-        comment="Google user ID if connected"
-    )
-    google_email = Column(Text, nullable=True, comment="Google email if connected")
-    google_access_token = Column(Text, nullable=True, comment="Google OAuth access token")
-    google_refresh_token = Column(Text, nullable=True, comment="Google OAuth refresh token")
-    google_token_expires_at = Column(
-        DateTime,
-        nullable=True,
-        comment="When Google access token expires"
-    )
-    google_calendar_id = Column(
-        Text,
-        nullable=True,
-        comment="Primary Google Calendar ID for events"
-    )
-    google_last_synced = Column(
-        DateTime,
-        nullable=True,
-        comment="Timestamp of last Google Calendar sync"
-    )
+    # Resume
+    resume_uploaded = Column(Boolean, default=False, nullable=False)
+    resume_file_url = Column(Text, nullable=True)
+    resume_text = Column(Text, nullable=True)
+    resume_json = Column(JSONB, nullable=True)
 
-    # Resume information
-    resume_uploaded = Column(
-        Boolean,
-        default=False,
-        nullable=False,
-        comment="Whether resume has been uploaded"
-    )
-    resume_file_url = Column(Text, nullable=True, comment="URL to uploaded resume file")
-    resume_text = Column(Text, nullable=True, comment="Extracted text content from resume")
-    resume_json = Column(JSONB, nullable=True, comment="Structured JSON data from resume parsing")
-    
     # Timestamps
-    created_at = Column(
-        DateTime,
-        default=datetime.datetime.utcnow,
-        nullable=False,
-        comment="When the profile was created"
-    )
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(
         DateTime,
         default=datetime.datetime.utcnow,
         onupdate=datetime.datetime.utcnow,
         nullable=False,
-        comment="When the profile was last modified"
     )
-    
-    # Relationship
+
     user = relationship("User", backref="profile")
-    
-    # Table constraints and indexes
+
     __table_args__ = (
         Index("idx_profile_user_id", "user_id"),
         Index("idx_profile_github_user_id", "github_user_id"),
-        Index("idx_profile_figma_user_id", "figma_user_id"),
-        Index("idx_profile_google_user_id", "google_user_id"),
-        # Spatial index for geographic queries (PostGIS will create GIST index)
-        {"comment": "User profile information and professional details"},
     )
-    
+
     def __repr__(self) -> str:
-        return f"<Profile(id={self.id}, user_id='{self.user_id}', headline='{self.headline}')>"
-    
+        return f"<Profile(id={self.id}, user_id='{self.user_id}')>"
+
     def to_dict(self) -> dict:
-        """Convert profile to dictionary for API responses."""
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -245,16 +98,6 @@ class Profile(Base):
             "github_username": self.github_username,
             "github_user_id": self.github_user_id,
             "github_last_synced": self.github_last_synced.isoformat() if self.github_last_synced else None,
-            "figma_connected": self.figma_connected,
-            "figma_username": self.figma_username,
-            "figma_user_id": self.figma_user_id,
-            "figma_email": self.figma_email,
-            "figma_last_synced": self.figma_last_synced.isoformat() if self.figma_last_synced else None,
-            "google_connected": self.google_connected,
-            "google_user_id": self.google_user_id,
-            "google_email": self.google_email,
-            "google_calendar_id": self.google_calendar_id,
-            "google_last_synced": self.google_last_synced.isoformat() if self.google_last_synced else None,
             "resume_uploaded": self.resume_uploaded,
             "resume_file_url": self.resume_file_url,
             "resume_text": self.resume_text,
@@ -262,4 +105,3 @@ class Profile(Base):
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
-
